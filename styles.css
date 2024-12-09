@@ -91,8 +91,6 @@ body {
     transition: transform 0.3s ease-in-out;
 }
 
-
-
 .food-item img {
     flex-shrink: 0;
     width: 90px;
@@ -279,8 +277,7 @@ hr {
     cursor: pointer;
 }
 
-img
-{
+img {
     max-width: 300px;
     max-height: 300px;
 }
