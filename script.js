@@ -1,13 +1,13 @@
-// Variables to track game state
+// Zmienne śledzące stan gry
 let coins = 0;
 let baseCoinsPerClick = 1;
 let coinsPerClick = baseCoinsPerClick;
 let foodBuff = 0;
 let currentSkin = 0;
 let unlockedSkins = [true, false, false, false, false, false, false];
-let activeHelpers = [false]; // Ensure this is initialized
+let activeHelpers = [false]; // Upewnij się, że to jest zainicjowane
 
-// DOM Elements
+// Elementy DOM
 const coinDisplay = document.querySelector('.coiny');
 const clickerImage = document.getElementById('buszko');
 const foodItems = document.querySelectorAll('.food-item');
@@ -19,14 +19,14 @@ const skinMultipliers = [1, 2, 5, 10, 55, 100, 500];
 const foodPrices = [100, 2500, 100000, 4444444, 240000000, 5600000000];
 const foodBuffs = [5, 25, 100, 444, 975, 1650];
 const helperPrices = [125000];
-const helperEarnings = [0.1]; // 10% of current Buszonki per click
+const helperEarnings = [0.1]; // 10% aktualnych Buszonków na kliknięcie
 
-// Update the coin display
+// Funkcja aktualizująca wyświetlanie monet
 function updateCoinDisplay() {
     coinDisplay.textContent = `Buszonki: ${Math.floor(coins)} (Buszonki na klikniecie: ${Math.floor(coinsPerClick)})`;
 }
 
-// Save progress with last online timestamp
+// Funkcja zapisywania postępu z czasem ostatniego online
 function saveProgress() {
     const progress = {
         coins,
@@ -34,13 +34,13 @@ function saveProgress() {
         foodBuff,
         currentSkin,
         unlockedSkins,
-        activeHelpers, // Save active helpers state
-        lastOnline: Date.now(), // Save the current timestamp
+        activeHelpers, // Zapisz stan aktywnych pomocników
+        lastOnline: Date.now(), // Zapisz bieżący czas
     };
     localStorage.setItem('buszkoClickerProgress', JSON.stringify(progress));
 }
 
-// Load progress
+// Funkcja ładowania postępu
 function loadProgress() {
     const savedProgress = localStorage.getItem('buszkoClickerProgress');
     if (savedProgress) {
@@ -53,9 +53,9 @@ function loadProgress() {
         activeHelpers = progress.activeHelpers || [false];
 
         const lastOnline = progress.lastOnline || Date.now();
-        const timeElapsed = (Date.now() - lastOnline) / 1000; // Time elapsed in seconds
+        const timeElapsed = (Date.now() - lastOnline) / 1000; // Czas w sekundach
 
-        // Calculate offline earnings for active helpers
+        // Oblicz zarobki offline dla aktywnych pomocników
         activeHelpers.forEach((isActive, index) => {
             if (isActive) {
                 const earnings = coinsPerClick * helperEarnings[index] * timeElapsed;
@@ -67,38 +67,38 @@ function loadProgress() {
         updateCoinDisplay();
         updateSkinUI();
 
-        // Restart active helpers
+        // Ponownie uruchom aktywnych pomocników
         activeHelpers.forEach((isActive, index) => {
             if (isActive) {
                 const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
                 if (helperDisplay) {
                     helperDisplay.classList.remove('hidden');
                 }
-                startHelper(index); // Restart helper interval here
+                startHelper(index); // Ponownie uruchom interwał pomocnika
             }
         });
     }
 }
 
-// Initialize the game
+// Inicjalizacja gry
 loadProgress();
 
-// Save progress periodically to track the last online time
-setInterval(saveProgress, 10000); // Save every 10 seconds
+// Okresowe zapisywanie postępu
+setInterval(saveProgress, 10000); // Zapisuj co 10 sekund
 
-// Reset all progress
+// Funkcja resetująca postęp
 function resetProgress() {
-    if (confirm("Czy jesteś pewnien że chcesz zresetować cały postęp?")) {
-        // Reset all game state
+    if (confirm("Czy jesteś pewny, że chcesz zresetować cały postęp?")) {
+        // Resetowanie wszystkich stanów gry
         coins = 0;
         baseCoinsPerClick = 1;
         coinsPerClick = baseCoinsPerClick;
         foodBuff = 0;
         currentSkin = 0;
         unlockedSkins = [true, false, false, false, false, false, false];
-        activeHelpers = [false]; // Reset all helpers
+        activeHelpers = [false]; // Resetowanie wszystkich pomocników
 
-        // Hide all helper displays
+        // Ukrywanie wszystkich pomocników
         document.querySelectorAll('.helper-item').forEach((helperItem, index) => {
             const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
             if (helperDisplay) {
@@ -112,14 +112,14 @@ function resetProgress() {
     }
 }
 
-// Buszko click handler
+// Obsługa kliknięcia Buszko
 function clickBuszko() {
     coins += coinsPerClick;
     updateCoinDisplay();
     saveProgress();
 }
 
-// Apply a skin
+// Funkcja stosująca skin
 function applySkin(skinIndex) {
     if (unlockedSkins[skinIndex]) {
         currentSkin = skinIndex;
@@ -132,13 +132,13 @@ function applySkin(skinIndex) {
     }
 }
 
-// Calculate coins per click
+// Funkcja obliczająca Buszonki na kliknięcie
 function calculateCoinsPerClick() {
     const skinMultiplier = skinMultipliers[currentSkin];
     coinsPerClick = (baseCoinsPerClick + foodBuff) * skinMultiplier;
 }
 
-// Update skin UI
+// Funkcja aktualizująca UI skina
 function updateSkinUI() {
     skinImages.forEach((img, index) => {
         img.classList.toggle('unlocked', unlockedSkins[index]);
@@ -147,7 +147,7 @@ function updateSkinUI() {
     });
 }
 
-// Handle skin click
+// Obsługa kliknięcia skina
 skinImages.forEach((img, index) => {
     img.addEventListener('click', () => {
         if (unlockedSkins[index]) {
@@ -160,31 +160,31 @@ skinImages.forEach((img, index) => {
             updateCoinDisplay();
             saveProgress();
         } else {
-            alert(`Nie masz wystarczająco Buszonków żeby to kupić :(`);
+            alert(`Nie masz wystarczająco Buszonków, żeby to kupić :(`);
         }
     });
 });
 
-// Handle food purchases and quantity logic
+// Obsługa zakupów jedzenia i logiki ilości
 foodItems.forEach((foodItem, index) => {
     const buyButton = document.getElementById(`buy-food${index + 1}`);
     const quantityInput = document.getElementById(`food${index + 1}-quantity`);
     const maxQuantityDisplay = document.getElementById(`food${index + 1}-max`);
 
-    // Function to update the maximum quantity of food that can be bought
+    // Funkcja do aktualizowania maksymalnej ilości jedzenia, które można kupić
     function updateMaxQuantity() {
-        const maxQuantity = Math.floor(coins / foodPrices[index]); // Calculate the maximum number of items
-        maxQuantityDisplay.textContent = `Max: ${maxQuantity}`; // Update the max quantity display
-        quantityInput.setAttribute("max", maxQuantity); // Set the max value in the input field
+        const maxQuantity = Math.floor(coins / foodPrices[index]); // Oblicz maksymalną ilość przedmiotów
+        maxQuantityDisplay.textContent = `Max: ${maxQuantity}`; // Zaktualizuj wyświetlanie maksymalnej ilości
+        quantityInput.setAttribute("max", maxQuantity); // Ustaw maksymalną wartość w polu wejściowym
     }
 
-    // Update max quantity when the page loads and when coins change
+    // Zaktualizuj maksymalną ilość po załadowaniu strony i po zmianie monet
     updateMaxQuantity();
     
-    // Recalculate max quantity whenever the player has enough coins
+    // Recalculuj maksymalną ilość, gdy gracz ma wystarczająco dużo monet
     buyButton.addEventListener('click', () => {
-        const quantity = parseInt(quantityInput.value); // Get the quantity from the input field
-        const totalCost = foodPrices[index] * quantity; // Calculate the total cost
+        const quantity = parseInt(quantityInput.value); // Pobierz ilość z pola wejściowego
+        const totalCost = foodPrices[index] * quantity; // Oblicz całkowity koszt
 
         if (quantity <= 0) {
             alert("Wpisz dodatnią liczbę!");
@@ -192,41 +192,41 @@ foodItems.forEach((foodItem, index) => {
         }
 
         if (coins >= totalCost) {
-            coins -= totalCost; // Deduct the coins for the total cost
-            foodBuff += foodBuffs[index] * quantity; // Apply the food buff multiplied by the quantity
-            calculateCoinsPerClick(); // Recalculate the coins per click
+            coins -= totalCost; // Odejmij monety za całkowity koszt
+            foodBuff += foodBuffs[index] * quantity; // Zastosuj buff jedzenia pomnożony przez ilość
+            calculateCoinsPerClick(); // Ponownie oblicz Buszonki na kliknięcie
             alert(`Nakarmiłeś Buszona! Dostajesz więcej Buszonków: ${foodBuffs[index] * quantity}.`);
             updateCoinDisplay();
             saveProgress();
-            updateMaxQuantity(); // Update the max quantity after purchase
+            updateMaxQuantity(); // Zaktualizuj maksymalną ilość po zakupie
         } else {
             alert(`Nie masz wystarczająco Buszonków, żeby to kupić!`);
         }
     });
 
-    // Recalculate max quantity when coins change (if needed)
-    setInterval(updateMaxQuantity, 1000); // Update every second (or whenever you need)
+    // Zaktualizuj maksymalną ilość, gdy monety się zmieniają (jeśli to konieczne)
+    setInterval(updateMaxQuantity, 1000); // Aktualizuj co sekundę (lub gdy potrzeba)
 });
 
-// Event listener for Buszko click
+// Obsługa kliknięcia Buszko
 clickerImage.addEventListener('click', clickBuszko);
 
-// Event listener for Reset Button
+// Obsługa resetowania postępu
 resetButton.addEventListener('click', resetProgress);
 
-// Start a helper's autoclick
+// Uruchomienie autoclickera pomocnika
 function startHelper(index) {
     setInterval(() => {
         if (activeHelpers[index]) {
             const earnings = coinsPerClick * helperEarnings[index];
             coins += earnings;
             updateCoinDisplay();
-            saveProgress(); // Save progress regularly
+            saveProgress(); // Regularnie zapisuj postęp
         }
-    }, 1000); // Autoclick every second
+    }, 1000); // Autoclicker co sekundę
 }
 
-// Purchase a helper
+// Zakup pomocnika
 function purchaseHelper(index) {
     if (coins >= helperPrices[index] && !activeHelpers[index]) {
         coins -= helperPrices[index];
@@ -240,7 +240,7 @@ function purchaseHelper(index) {
         startHelper(index);
         alert("Pomocnik kupiony!");
         updateCoinDisplay();
-        saveProgress(); // Save state after purchase
+        saveProgress(); // Zapisz stan po zakupie
     } else if (activeHelpers[index]) {
         alert("Już masz tego pomocnika!");
     } else {
@@ -248,7 +248,7 @@ function purchaseHelper(index) {
     }
 }
 
-// Show helper displays only if they exist
+// Pokaż wyświetlanie pomocników tylko jeśli istnieją
 activeHelpers.forEach((isActive, index) => {
     const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
     if (helperDisplay && isActive) {
@@ -256,22 +256,22 @@ activeHelpers.forEach((isActive, index) => {
     }
 });
 
-// Add event listeners for helpers
+// Dodaj event listenery dla pomocników
 document.querySelectorAll('.helper-item').forEach((helperItem, index) => {
     helperItem.addEventListener('click', () => purchaseHelper(index));
 });
 
-// Song Data: Updated Prices and States
+// Dane utworów: Zaktualizowane ceny i stany
 const songs = [
-    { id: 'song1', cost: 0, src: 'bones.mp3', unlocked: true }, // Free song, already unlocked
+    { id: 'song1', cost: 0, src: 'bones.mp3', unlocked: true }, // Darmowy utwór, już odblokowany
     { id: 'song2', cost: 99999999999999999, src: 'enemy.mp3', unlocked: false },
 ];
 
-// Track Currently Playing Audio and Its ID
+// Śledzenie aktualnie odtwarzanej muzyki i jej ID
 let currentAudio = null;
 let currentSongId = null;
 
-// Function to Unlock Songs
+// Funkcja odblokowująca utwory
 function unlockSong(song) {
     if (coins >= song.cost && !song.unlocked) {
         coins -= song.cost;
@@ -280,9 +280,9 @@ function unlockSong(song) {
         const songImage = document.getElementById(song.id);
         songImage.classList.remove('locked');
         songImage.classList.add('unlocked');
-        songImage.title = "Kliknij żeby odtworzyć";
+        songImage.title = "Kliknij, aby odtworzyć";
 
-        alert(`Unlocked "${song.id}"!`);
+        alert(`Odblokowano "${song.id}"!`);
         updateCoinDisplay();
         saveProgress();
     } else if (song.unlocked) {
@@ -292,7 +292,7 @@ function unlockSong(song) {
     }
 }
 
-// Function to Play or Stop a Song
+// Funkcja odtwarzająca lub zatrzymująca utwór
 function toggleSongPlayback(song) {
     if (!song.unlocked) {
         alert("Musisz najpierw odblokować to");
@@ -300,45 +300,38 @@ function toggleSongPlayback(song) {
     }
 
     if (currentAudio && currentSongId === song.id) {
-        // Stop the current song
+        // Zatrzymaj obecny utwór
         currentAudio.pause();
         currentAudio.currentTime = 0;
         currentAudio = null;
         currentSongId = null;
         alert(`Zatrzymano "${song.id}".`);
     } else {
-        // Stop any playing audio
+        // Wybierz nowy utwór do odtwarzania
         if (currentAudio) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
         }
 
-        // Play the selected song
         currentAudio = new Audio(song.src);
-        currentAudio.loop = true;
         currentAudio.play();
         currentSongId = song.id;
-        alert(`Odtwarzanie "${song.id}"!`);
+
+        alert(`Odtwarzanie: "${song.id}"`);
     }
 }
 
-// Add Event Listeners for Song Images
+// Dodaj event listenery dla utworów
 songs.forEach(song => {
-    const songImage = document.getElementById(song.id);
-
-    // Handle Click
-    songImage.addEventListener('click', () => {
-        if (!song.unlocked) {
-            unlockSong(song);
-        } else {
-            toggleSongPlayback(song);
-        }
-    });
-
-    // Update Initial Locked State
-    if (!song.unlocked) {
-        songImage.classList.add('locked');
-    } else {
-        songImage.classList.add('unlocked');
+    const songElement = document.getElementById(song.id);
+    if (songElement) {
+        songElement.addEventListener('click', () => {
+            if (song.unlocked) {
+                toggleSongPlayback(song);
+            } else {
+                unlockSong(song);
+            }
+        });
     }
 });
+
