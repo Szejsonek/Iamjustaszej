@@ -79,6 +79,52 @@ function loadProgress() {
         });
     }
 }
+// Funkcja do wczytania leaderboarda
+function loadLeaderboard() {
+    const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+    const sortedLeaderboard = leaderboard.sort((a, b) => b.score - a.score); // Sortowanie po punktach
+    const top10 = sortedLeaderboard.slice(0, 10); // Top 10 graczy
+
+    // Wyświetlanie leaderboarda
+    const leaderboardList = document.getElementById('leaderboard-list');
+    leaderboardList.innerHTML = ''; // Czyszczenie listy przed załadowaniem nowych wyników
+
+    top10.forEach((player, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${index + 1}. ${player.nickname} - ${player.score} pkt`;
+        leaderboardList.appendChild(li);
+    });
+}
+
+// Funkcja do zapisywania nowego wyniku
+function saveScore(event) {
+    event.preventDefault(); // Zapobiega przeładowaniu strony
+
+    const nicknameInput = document.getElementById('nickname');
+    const scoreInput = document.getElementById('score');
+
+    const nickname = nicknameInput.value.trim();
+    const score = parseInt(scoreInput.value);
+
+    if (nickname && score >= 0) {
+        const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+        leaderboard.push({ nickname, score }); // Dodanie nowego wyniku
+
+        localStorage.setItem('leaderboard', JSON.stringify(leaderboard)); // Zapisanie w localStorage
+        nicknameInput.value = '';
+        scoreInput.value = '';
+        
+        loadLeaderboard(); // Przeładuj leaderboard
+    } else {
+        alert("Proszę wprowadzić poprawne dane!");
+    }
+}
+
+// Dodaj event listener do formularza
+document.getElementById('nickname-form').addEventListener('submit', saveScore);
+
+// Załaduj leaderboard na starcie
+loadLeaderboard();
 
 // Inicjalizacja gry
 loadProgress();
