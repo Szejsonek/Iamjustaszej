@@ -1,50 +1,65 @@
-// Array to store the leaderboard data
-let leaderboard = [];
+// script.js
 
-// Variable to store the current score
-let currentScore = 0;
+let coins = 0; // Początkowy wynik
 
-// Update the leaderboard by adding the player's score
-function updateLeaderboard(username, score) {
-    leaderboard.push({ username: username, score: score });
+// Zmienna na przechowanie listy wyników
+let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
 
-    // Sort the leaderboard based on score (descending order)
-    leaderboard.sort((a, b) => b.score - a.score);
+// Funkcja do aktualizacji tabeli wyników
+function updateLeaderboard() {
+    const leaderboardTable = document.querySelector('#scoreboard tbody');
+    leaderboardTable.innerHTML = ''; // Czyści tabelę przed dodaniem nowych danych
 
-    // Keep only the top 10 players
-    if (leaderboard.length > 10) {
-        leaderboard = leaderboard.slice(0, 10);
-    }
+    // Sortowanie wyników malejąco (od najwyższego)
+    leaderboard.sort((a, b) => b.coins - a.coins);
 
-    // Display the leaderboard
-    displayLeaderboard();
-}
-
-// Display the leaderboard on the page
-function displayLeaderboard() {
-    const leaderboardList = document.getElementById('leaderboard-list');
-    leaderboardList.innerHTML = ''; // Clear previous leaderboard
-
-    leaderboard.forEach((entry, index) => {
-        const li = document.createElement('li');
-        li.textContent = `${index + 1}. ${entry.username} - ${entry.score} pkt`;
-        leaderboardList.appendChild(li);
+    // Przewiń tylko top 10 graczy
+    leaderboard.slice(0, 10).forEach(player => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${player.nickname}</td><td>${player.coins}</td>`;
+        leaderboardTable.appendChild(row);
     });
 }
 
-// Increment score when the clicker button is clicked
-document.getElementById('clicker-button').addEventListener('click', () => {
-    currentScore++;
-    document.getElementById('score').textContent = currentScore; // Update the displayed score
-});
+// Funkcja do dodania gracza do tabeli wyników
+function addPlayerToLeaderboard(nickname, coins) {
+    const player = { nickname, coins };
+    leaderboard.push(player);
 
-// Save the score after clicking the "Save Score" button
-function saveScore() {
-    const username = prompt("Podaj swoją nazwę:"); // Prompt user for their username
-    if (username) {
-        updateLeaderboard(username, currentScore); // Update leaderboard with the player's score
-    }
+    // Zapisz leaderboard do localStorage
+    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+
+    // Zaktualizuj tabelę wyników
+    updateLeaderboard();
 }
 
-// For demonstration, save score after 10 seconds (you can remove this or call it when the game ends)
-setTimeout(saveScore, 10000); // Simulate a score save after 10 seconds
+// Obsługa formularza do wpisania nicku
+document.getElementById('submit-nickname').addEventListener('click', () => {
+    const nicknameInput = document.getElementById('nickname');
+    const nickname = nicknameInput.value.trim();
+
+    if (nickname === '') {
+        alert('Proszę podać swój nick!');
+        return;
+    }
+
+    // Dodaj gracza do tabeli wyników
+    addPlayerToLeaderboard(nickname, coins);
+
+    // Ukryj formularz i pokaż tabelę wyników
+    document.getElementById('nickname-form').style.display = 'none';
+});
+
+// Inicjalizacja tabeli wyników przy załadowaniu strony
+updateLeaderboard();
+
+// Inicjalizacja gry i aktualizacja wyników (w tej części musisz zintegrować swój kod z wynikiem)
+function updateCoinDisplay() {
+    document.querySelector('.coiny').textContent = `Buszonki: ${Math.floor(coins)}`;
+}
+
+// Funkcja kliknięcia Buszka (przykład z Twojego kodu)
+document.getElementById('buszko').addEventListener('click', () => {
+    coins += 1; // Dodajemy Buszonka za kliknięcie
+    updateCoinDisplay();
+});
