@@ -1,49 +1,50 @@
 // Array to store the leaderboard data
 let leaderboard = [];
 
-// Example function to update leaderboard
+// Variable to store the current score
+let currentScore = 0;
+
+// Update the leaderboard by adding the player's score
 function updateLeaderboard(username, score) {
-    // Push new score to leaderboard
     leaderboard.push({ username: username, score: score });
 
-    // Sort the leaderboard based on score (descending)
+    // Sort the leaderboard based on score (descending order)
     leaderboard.sort((a, b) => b.score - a.score);
 
-    // Trim leaderboard to top 10
+    // Keep only the top 10 players
     if (leaderboard.length > 10) {
         leaderboard = leaderboard.slice(0, 10);
     }
 
-    // Update the leaderboard display
+    // Display the leaderboard
     displayLeaderboard();
 }
 
-// Function to display the leaderboard
+// Display the leaderboard on the page
 function displayLeaderboard() {
     const leaderboardList = document.getElementById('leaderboard-list');
-    leaderboardList.innerHTML = ''; // Clear the previous list
+    leaderboardList.innerHTML = ''; // Clear previous leaderboard
 
     leaderboard.forEach((entry, index) => {
         const li = document.createElement('li');
-        li.textContent = `${index + 1}. ${entry.username} - ${entry.score} pts`;
+        li.textContent = `${index + 1}. ${entry.username} - ${entry.score} pkt`;
         leaderboardList.appendChild(li);
     });
 }
 
-// Example: call this function when user finishes game or clicks a button
+// Increment score when the clicker button is clicked
+document.getElementById('clicker-button').addEventListener('click', () => {
+    currentScore++;
+    document.getElementById('score').textContent = currentScore; // Update the displayed score
+});
+
+// Save the score after clicking the "Save Score" button
 function saveScore() {
-    const username = prompt("Enter your username:"); // You can modify this to get username differently
-    const score = getUserScore(); // Assume this function returns the current score of the user
-    updateLeaderboard(username, score);
+    const username = prompt("Podaj swoją nazwę:"); // Prompt user for their username
+    if (username) {
+        updateLeaderboard(username, currentScore); // Update leaderboard with the player's score
+    }
 }
 
-// Placeholder for getting user score (this should be implemented based on your game logic)
-function getUserScore() {
-    // Example: return random score for now, replace it with actual score logic
-    return Math.floor(Math.random() * 1000); // This will return a random score between 0 and 999
-}
-
-// Initialize leaderboard on page load
-window.onload = function() {
-    displayLeaderboard();
-};
+// For demonstration, save score after 10 seconds (you can remove this or call it when the game ends)
+setTimeout(saveScore, 10000); // Simulate a score save after 10 seconds
