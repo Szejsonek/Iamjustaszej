@@ -22,7 +22,7 @@ body {
     border-radius: 10px;
     width: 250px;
     font-family: Arial, sans-serif;
-    z-index: 1000; /* Na wierzchu innych elementów */
+    z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.8);
 }
 
@@ -61,44 +61,27 @@ body {
     cursor: pointer;
 }
 
-/* Placeholder for empty leaderboard when no data is present */
-#leaderboard-list:empty::before {
-    content: "Brak danych do wyświetlenia";
-    font-style: italic;
-    color: #ccc;
+/* Game Button */
+.game-container {
     text-align: center;
-    display: block;
-    margin-top: 20px;
+    margin-top: 200px;
 }
 
-/* Styles for leaderboard section when active */
-.leaderboard-container.active {
-    background-color: rgba(0, 0, 0, 0.9);
-}
-
-/* Scrollbar styles for leaderboard list */
-#leaderboard-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-#leaderboard-list::-webkit-scrollbar-thumb {
+#clicker-button {
+    padding: 20px 40px;
     background-color: #ff6600;
-    border-radius: 5px;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-#leaderboard-list::-webkit-scrollbar-thumb:hover {
+#clicker-button:hover {
     background-color: #cc5200;
 }
 
-#leaderboard-list::-webkit-scrollbar-track {
-    background-color: #333;
-    border-radius: 5px;
-}
-
-/* Responsive design for small screens */
-@media screen and (max-width: 600px) {
-    .leaderboard-container {
-        width: 200px;
-        font-size: 14px;
-    }
+#clicker-button:active {
+    transform: scale(0.95);
 }
