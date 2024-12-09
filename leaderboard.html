@@ -3,19 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clicker Game</title>
+    <title>Buszko Clicker</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="leaderboard-container">
-        <h2>Leaderboard</h2>
-        <ul id="leaderboard-list"></ul>
+    <!-- Formularz do wpisania nicku -->
+    <div id="nickname-form">
+        <input type="text" id="nickname" placeholder="Podaj swój nick" />
+        <button id="submit-nickname">Zatwierdź nick</button>
     </div>
-    
-    <div class="game-container">
-        <h1>Clicker Game</h1>
-        <p>Twój wynik: <span id="score">0</span> pkt</p>
-        <button id="clicker-button">Kliknij mnie!</button>
+
+    <!-- Tabela wyników -->
+    <div id="leaderboard">
+        <h2>Top 10 Graczy</h2>
+        <table id="scoreboard">
+            <thead>
+                <tr>
+                    <th>Nick</th>
+                    <th>Wynik</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Wiersze z wynikami będą dodawane tutaj dynamicznie -->
+            </tbody>
+        </table>
     </div>
 
     <script src="script.js"></script>
